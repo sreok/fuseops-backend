@@ -12,7 +12,7 @@ import (
 
 // LoginRequest 登录请求结构体
 type LoginRequest struct {
-	UserName string `json:"user_name" binding:"required"`
+	UserName string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
 
@@ -50,13 +50,13 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user": gin.H{
-			"id":        user.ID,
-			"user_name": user.UserName,
-			"real_name": user.RealName,
-			"avatar":    user.Avatar,
-			"role_id":   user.RoleID,
-			"grade_id":  user.GradeID,
-			"status":    user.Status,
+			"id":       user.ID,
+			"username": user.UserName,
+			"realname": user.RealName,
+			"avatar":   user.Avatar,
+			"roleid":   user.RoleID,
+			"gradeid":  user.GradeID,
+			"status":   user.Status,
 		},
 	})
 }

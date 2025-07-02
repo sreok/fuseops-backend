@@ -11,14 +11,18 @@ import (
 
 var DB *gorm.DB
 
+// InitDB 初始化数据库连接
 func InitDB() {
+	// 构建 MySQL DSN（数据源名称）
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		viper.GetString("db.user"),
-		viper.GetString("db.password"),
-		viper.GetString("db.host"),
-		viper.GetString("db.port"),
-		viper.GetString("db.dbname"),
+		viper.GetString("db.user"),     // 数据库用户名
+		viper.GetString("db.password"), // 数据库密码
+		viper.GetString("db.host"),     // 数据库主机地址
+		viper.GetString("db.port"),     // 数据库端口
+		viper.GetString("db.dbname"),   // 数据库名称
 	)
+
+	// 连接数据库
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
