@@ -1,0 +1,15 @@
+server:
+  port: 8080
+
+db:
+  user: root
+  password: 123456
+  host: 127.0.0.1
+  port: "3306"
+  dbname: fuseops
+
+table_prefix: t_
+
+jwt:
+  secret: NRY4DWMYE0Oq3czDvP25XmKD9asKkThpogcWUXmmkNU=
+  expire_hours: 24
