@@ -295,13 +295,13 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "password",
-                "user_name"
+                "username"
             ],
             "properties": {
                 "password": {
                     "type": "string"
                 },
-                "user_name": {
+                "username": {
                     "type": "string"
                 }
             }
@@ -313,11 +313,11 @@ const docTemplate = `{
                     "description": "头像地址",
                     "type": "string"
                 },
-                "create_time": {
+                "createtime": {
                     "description": "创建时间",
                     "type": "string"
                 },
-                "grade_id": {
+                "gradeid": {
                     "description": "班级ID",
                     "type": "integer"
                 },
@@ -325,7 +325,7 @@ const docTemplate = `{
                     "description": "用户ID",
                     "type": "integer"
                 },
-                "is_deleted": {
+                "isdeleted": {
                     "description": "逻辑删除 0未删除 1已删除",
                     "type": "integer"
                 },
@@ -333,11 +333,11 @@ const docTemplate = `{
                     "description": "密码",
                     "type": "string"
                 },
-                "real_name": {
+                "realname": {
                     "description": "真实姓名",
                     "type": "string"
                 },
-                "role_id": {
+                "roleid": {
                     "description": "角色ID",
                     "type": "integer"
                 },
@@ -345,7 +345,7 @@ const docTemplate = `{
                     "description": "状态 1正常0禁用",
                     "type": "integer"
                 },
-                "user_name": {
+                "username": {
                     "description": "用户名",
                     "type": "string"
                 }
