@@ -30,33 +30,54 @@ type LoginRequest struct {
 func Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "error": "参数错误"})
 		return
 	}
 	var user model.User
-	if err := repository.DB.Where("user_name = ?", req.UserName).First(&user).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户名或密码错误"})
+	// 查询用户名
+	if err := repository.DB.Where("username = ?", req.UserName).First(&user).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "用户名或密码错误"})
 		return
 	}
+
+	// 验证密码
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "用户名或密码错误"})
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "error": "用户名或密码错误"})
 		return
 	}
-	token, err := pkg.GenerateToken(user.ID, user.UserName)
+
+	// 查询角色所有ID
+	roleIDs, err := repository.GetRoleIDsByUserID(user.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成token失败"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "查询角色ID失败"})
 		return
 	}
+
+	// 根据角色ID查询所有角色代码
+	roleCodes, err := repository.GetRoleCodeByRoleIDs(roleIDs)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "查询角色ID失败"})
+		return
+	}
+
+	// 生成token
+	token, expires, err := pkg.GenerateToken(user.ID, user.UserName)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": "生成token失败"})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"user": gin.H{
-			"id":       user.ID,
-			"username": user.UserName,
-			"realname": user.RealName,
-			"avatar":   user.Avatar,
-			"roleid":   user.RoleID,
-			"gradeid":  user.GradeID,
-			"status":   user.Status,
+		"success": true,
+		"data": gin.H{
+			"avatar":       user.Avatar,
+			"username":     user.UserName,
+			"nickname":     user.RealName,
+			"roles":        roleCodes,
+			"permissions":  []string{"permission:btn:add", "permission:btn:edit"},
+			"accessToken":  token,
+			"refreshToken": token + "Refresh",
+			"expires":      expires,
 		},
 	})
 }

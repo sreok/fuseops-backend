@@ -46,6 +46,7 @@ func main() {
 	{
 		api.RegisterAuthRoutes(apiGroup)
 		api.RegisterUserRoutes(apiGroup)
+		api.RegisterRoleRoutes(apiGroup)
 	}
 
 	port := viper.GetString("server.port")

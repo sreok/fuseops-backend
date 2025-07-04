@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"fuseops-backend/internal/model"
@@ -45,27 +45,27 @@ func CreateUser(c *gin.Context) {
 
 // GetUser 查询用户
 // @Summary 查询用户
-// @Description 根据ID查询用户
+// @Description 根据用户名查询
 // @Tags 用户管理
 // @Produce json
-// @Param id query int true "用户ID"
+// @Param username query string true "用户名"
 // @Success 200 {object} model.User
 // @Failure 400 {object} map[string]string
 // @Failure 404 {object} map[string]string
 // @Security ApiKeyAuth
 // @Router /api/users [get]
 func GetUser(c *gin.Context) {
-	idStr := c.Query("id")
-	id, err := strconv.Atoi(idStr)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "参数id无效"})
+	username := c.Query("username")
+	if username == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "参数无效"})
 		return
 	}
 	var user model.User
-	if err := repository.DB.First(&user, id).Error; err != nil {
+	if err := repository.DB.Where("username = ?", username).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "用户未找到"})
 		return
 	}
+	user.Password = ""
 	c.JSON(http.StatusOK, user)
 }
 
@@ -113,7 +113,8 @@ func UpdateUser(c *gin.Context) {
 	user.RealName = req.RealName
 	user.Avatar = req.Avatar
 	user.RoleID = req.RoleID
-	user.GradeID = req.GradeID
+	user.Phone = req.Phone
+	user.Email = req.Email
 	user.Status = req.Status
 
 	if err := repository.DB.Save(&user).Error; err != nil {
